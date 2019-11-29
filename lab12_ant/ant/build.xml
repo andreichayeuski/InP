@@ -1,0 +1,37 @@
+<project name="lab12_ant" default="war" basedir="..">
+    <property file="ant/build.properties"/>
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="*.jar"/>
+    </path>
+    <target name="clean">
+        <echo>Cleaning the ${lib.dir}</echo>
+        <echo>Cleaning the ${build.dir}</echo>
+        <delete dir="${build.dir}"/>
+    </target>
+    <target name="init" depends="clean">
+        <echo>Creating the build directory</echo>
+        <mkdir dir="${build.dir}/WEB-INF/classes"/>
+        <mkdir dir="${build.dir}/WEB-INF/lib"/>
+    </target>
+    <target name="compile" depends="init">
+        <echo>Compile the source files</echo>
+        <javac srcdir="${src.dir}" destdir="${build.dir}/WEB-INF/classes">
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+    <target name="copy" depends="compile">
+        <echo>Start copy</echo>
+        <copy todir="${build.dir}">
+            <fileset dir="${web.content}"/>
+        </copy>
+        <copy todir="${build.dir}/WEB-INF/lib">
+            <fileset dir="${lib.dir}"/>
+        </copy>
+    </target>
+    <target name="war" depends="copy">
+        <echo>Building the war file</echo>
+        <war destfile="${dist.dir}/${project.name}.war" webxml="${build.dir}/WEB-INF/web.xml">
+            <fileset dir="${build.dir}"/>
+        </war>
+    </target>
+</project>
