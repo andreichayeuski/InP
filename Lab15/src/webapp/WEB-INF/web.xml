@@ -11,4 +11,8 @@
         <param-name>UserPassword</param-name>
         <param-value>1308-stratosta-ej</param-value>
     </context-param>
+    <context-param>
+        <param-name>Subject</param-name>
+        <param-value>Lab_15_Java</param-value>
+    </context-param>
 </web-app>

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Properties;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 
 public class EmailAdmin {
     public static String showMessages(final String userEmail, final String password) throws MessagingException, IOException {
@@ -27,7 +28,25 @@ public class EmailAdmin {
             result.append("<div>");
             result.append("<p>").append(InternetAddress.toString(message.getFrom())).append("</p>");
             result.append("<p>").append(message.getSubject()).append("</p>");
-            result.append("<p>").append(message.getContent()).append("</p>");
+            String messageContent = new String();
+            String contentType = message.getContentType();
+            if (contentType.contains("multipart")) {
+                Multipart multiPart = (Multipart) message.getContent();
+                int numberOfParts = multiPart.getCount();
+                for (int partCount = 0; partCount < numberOfParts; partCount++) {
+                    MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
+                    messageContent = part.getContent().toString();
+                }
+            }
+            else if (contentType.contains("text/plain")
+                    || contentType.contains("text/html")) {
+                Object content = message.getContent();
+                if (content != null) {
+                    messageContent = content.toString();
+                }
+            }
+            result.append("<p class='hidden' style='display:none;'>").append(messageContent).append("</p>");
+
             result.append("<p>").append(message.getSentDate()).append("</p>");
             result.append("</div>");
             result.append("</br>");
